@@ -9,6 +9,10 @@
 #define i_SIZE 0x1
 #define MPI_INFO 0x2
 
+/* some program specific macros */
+#define SENSING 0x1
+
+
 /* set up any MPI related info */
 #define MPI_SETUP(argc, argv, rank, size)\
   MPI_Init(&argc, &argv);\
@@ -17,6 +21,7 @@
 
 /* clean up any MPI related info */
 #define MPI_FINISH()\
+  EXIT:\
   MPI_Finalize();
 
 /* DEBUG DEBUG DEBUG */

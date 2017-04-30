@@ -9,6 +9,10 @@ int main( int argc, char ** argv ){
   DBG("Hello I am #%d out of %d.\n", info[i_RANK], info[i_SIZE]);
 
 
+  while( SENSING ){
+
+  }
+
   MPI_FINISH();
   return 0;
 }
