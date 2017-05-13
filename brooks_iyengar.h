@@ -2,7 +2,18 @@
 #define BROOKSIYENGAR_H
 
 #include <mpi.h>
+#include <time.h>
 #include <stdio.h>
+#include <unistd.h>
+
+struct sensor_message {
+  int num;
+  float data;
+  time_t time_of_measurement;
+};
+
+#define MESSAGE_SIZE\
+  sizeof( struct sensor_message )
 
 /* index of MPI data in info array*/
 #define i_RANK 0x0
@@ -12,6 +23,15 @@
 /* some program specific macros */
 #define SENSING 0x1
 
+#define MPI_LOGIC( index, rank )\
+  index < rank ? index : index - 1;
+
+#define PRINT_MESSAGE(message)\
+  char sbuf[30];\
+  struct tm lt = *localtime( &message.time_of_measurement );\
+  strftime(sbuf, 30,"%x at %I:%M%p", &lt );\
+  fprintf(stderr, "Message is from %d :: data is %f on %s\n",\
+      message.num, message.data, sbuf);
 
 /* set up any MPI related info */
 #define MPI_SETUP(argc, argv, rank, size)\

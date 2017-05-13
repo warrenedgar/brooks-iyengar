@@ -1,0 +1,36 @@
+[Warrens-MacBook-Pro:05016] *** Process received signal ***
+[Warrens-MacBook-Pro:05016] Signal: Segmentation fault: 11 (11)
+[Warrens-MacBook-Pro:05016] Signal code: Address not mapped (1)
+[Warrens-MacBook-Pro:05016] Failing at address: 0x156810591
+[Warrens-MacBook-Pro:05015] *** Process received signal ***
+[Warrens-MacBook-Pro:05015] Signal: Segmentation fault: 11 (11)
+[Warrens-MacBook-Pro:05015] Signal code: Address not mapped (1)
+[Warrens-MacBook-Pro:05015] Failing at address: 0x15219623c
+[Warrens-MacBook-Pro:05015] [ 0] 0   libsystem_platform.dylib            0x00007fff8ad6152a _sigtramp + 26
+[Warrens-MacBook-Pro:05015] [ 1] [Warrens-MacBook-Pro:05016] [ 0] 0   libsystem_platform.dylib            0x00007fff8ad6152a _sigtramp + 26
+[Warrens-MacBook-Pro:05016] [ 1] 0   ???                                 0x00000001ffffffff 0x0 + 8589934591
+[Warrens-MacBook-Pro:05016] [ 2] 0   libsystem_c.dylib                   0x00007fff86f9c870 getenv + 29
+[Warrens-MacBook-Pro:05016] [ 3] 0   libsystem_c.dylib                   0x00007fff86f91f3c _st_tzset_basic + 50
+[Warrens-MacBook-Pro:05016] [ 4] 0   libsystem_c.dylib                   0x00007fff86f9384c localtime + 206
+[Warrens-MacBook-Pro:05016] [ 5] 0   brooks_iyengar                      0x00000001093efe05 main + 565
+[Warrens-MacBook-Pro:05016] [ 6] 0   libdyld.dylib                       0x00007fff8f3b15ad start + 1
+[Warrens-MacBook-Pro:05016] [ 7] 0   ???                                 0x0000000000000001 0x0 + 1
+[Warrens-MacBook-Pro:05016] *** End of error message ***
+0   mca_pml_ob1.so                      0x0000000116f4baae mca_pml_ob1_verbose + 6606
+[Warrens-MacBook-Pro:05015] [ 2] [Warrens-MacBook-Pro:05017] *** Process received signal ***
+[Warrens-MacBook-Pro:05017] Signal: Segmentation fault: 11 (11)
+[Warrens-MacBook-Pro:05017] Signal code: Address not mapped (1)
+[Warrens-MacBook-Pro:05017] Failing at address: 0x30
+0   libmpi.20.dylib                     0x000000010dab70a6 MPI_Waitall + 161
+[Warrens-MacBook-Pro:05015] [ 3] 0   brooks_iyengar                      0x000000010da69dbc main + 492
+[Warrens-MacBook-Pro:05015] [ 4] 0   libdyld.dylib                       0x00007fff8f3b15ad start + 1
+[Warrens-MacBook-Pro:05015] [ 5] 0   ???                                 0x0000000000000001 0x0 + 1
+[Warrens-MacBook-Pro:05015] *** End of error message ***
+[Warrens-MacBook-Pro:05017] [ 0] 0   libsystem_platform.dylib            0x00007fff8ad6152a _sigtramp + 26
+[Warrens-MacBook-Pro:05017] [ 1] 0   libsystem_c.dylib                   0x00007fff86fc8f7b hexlist + 1547
+[Warrens-MacBook-Pro:05017] [ 2] 0   libdyld.dylib                       0x00007fff8f3b15ad start + 1
+[Warrens-MacBook-Pro:05017] [ 3] 0   ???                                 0x0000000000000001 0x0 + 1
+[Warrens-MacBook-Pro:05017] *** End of error message ***
+--------------------------------------------------------------------------
+mpirun noticed that process rank 1 with PID 0 on node Warrens-MacBook-Pro exited on signal 11 (Segmentation fault: 11).
+--------------------------------------------------------------------------

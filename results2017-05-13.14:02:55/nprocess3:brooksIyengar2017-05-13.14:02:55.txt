@@ -1,0 +1,54 @@
+[Warrens-MacBook-Pro:5231] *** An error occurred in MPI_Irecv
+[Warrens-MacBook-Pro:5231] *** reported by process [2679111681,4294967298]
+[Warrens-MacBook-Pro:5231] *** on communicator MPI_COMM_WORLD
+[Warrens-MacBook-Pro:5231] *** MPI_ERR_BUFFER: invalid buffer pointer
+[Warrens-MacBook-Pro:5231] *** MPI_ERRORS_ARE_FATAL (processes in this communicator will now abort,
+[Warrens-MacBook-Pro:5231] ***    and potentially your MPI job)
+[Warrens-MacBook-Pro:05229] *** Process received signal ***
+[Warrens-MacBook-Pro:05231] *** Process received signal ***
+[Warrens-MacBook-Pro:05231] Signal: Abort trap: 6 (6)
+[Warrens-MacBook-Pro:05231] Signal code:  (0)
+[Warrens-MacBook-Pro:05231] [ 0] [Warrens-MacBook-Pro:05229] Signal: Abort trap: 6 (6)
+[Warrens-MacBook-Pro:05229] Signal code:  (0)
+[Warrens-MacBook-Pro:05229] [ 0] 0   libsystem_platform.dylib            0x00007fff8ad6152a _sigtramp + 26
+[Warrens-MacBook-Pro:05229] [ 1] 0   ???                                 0x000000000000ffff 0x0 + 65535
+[Warrens-MacBook-Pro:05229] [ 2] 0   libsystem_c.dylib                   0x00007fff86f9b6e7 abort + 129
+[Warrens-MacBook-Pro:05229] [ 3] 0   libsystem_malloc.dylib              0x00007fff8e6e2041 szone_size + 0
+[Warrens-MacBook-Pro:05229] [ 4] [Warrens-MacBook-Pro:05230] *** Process received signal ***
+[Warrens-MacBook-Pro:05230] Signal: Abort trap: 6 (6)
+[Warrens-MacBook-Pro:05230] Signal code:  (0)
+[Warrens-MacBook-Pro:05230] [ 0] 0   libsystem_platform.dylib            0x00007fff8ad6152a _sigtramp + 26
+[Warrens-MacBook-Pro:05230] [ 1] 0   ???                                 0x000000000000ffff 0x0 + 65535
+[Warrens-MacBook-Pro:05230] [ 2] 0   libsystem_c.dylib                   0x00007fff86f9b6e7 abort + 129
+[Warrens-MacBook-Pro:05230] [ 3] 0   libsystem_malloc.dylib              0x00007fff8e6e2041 szone_size + 0
+[Warrens-MacBook-Pro:05230] [ 4] 0   libsystem_platform.dylib            0x00007fff8ad6152a _sigtramp + 26
+[Warrens-MacBook-Pro:05231] [ 1] 0   ???                                 0x000000000000ffff 0x0 + 65535
+[Warrens-MacBook-Pro:05231] [ 2] 0   libsystem_c.dylib                   0x00007fff86f9b6e7 abort + 129
+[Warrens-MacBook-Pro:05231] [ 3] 0   libsystem_malloc.dylib              0x00007fff8e6e2041 szone_size + 0
+[Warrens-MacBook-Pro:05231] [ 4] 0   libmpi.20.dylib                     0x00000001058429c5 backend_fatal + 1119
+[Warrens-MacBook-Pro:05229] [ 5] 0   libmpi.20.dylib                     0x0000000105842551 ompi_mpi_errors_are_fatal_comm_handler + 173
+[Warrens-MacBook-Pro:05229] [ 6] 0   libmpi.20.dylib                     0x000000010aefd9c5 backend_fatal + 1119
+[Warrens-MacBook-Pro:05230] [ 5] 0   libmpi.20.dylib                     0x000000010aefd551 ompi_mpi_errors_are_fatal_comm_handler + 173
+[Warrens-MacBook-Pro:05230] [ 6] 0   libmpi.20.dylib                     0x000000010ca989c5 backend_fatal + 1119
+[Warrens-MacBook-Pro:05231] [ 5] 0   libmpi.20.dylib                     0x000000010ca98551 ompi_mpi_errors_are_fatal_comm_handler + 173
+[Warrens-MacBook-Pro:05231] [ 6] 0   libmpi.20.dylib                     0x0000000105842286 ompi_errhandler_invoke + 98
+[Warrens-MacBook-Pro:05229] [ 7] 0   libmpi.20.dylib                     0x0000000105869539 MPI_Irecv + 559
+[Warrens-MacBook-Pro:05229] [ 8] 0   brooks_iyengar                      0x000000010582ce8f main + 383
+[Warrens-MacBook-Pro:05229] [ 9] 0   libdyld.dylib                       0x00007fff8f3b15ad start + 1
+[Warrens-MacBook-Pro:05229] [10] 0   ???                                 0x0000000000000001 0x0 + 1
+0   libmpi.20.dylib                     0x000000010aefd286 ompi_errhandler_invoke + 98
+[Warrens-MacBook-Pro:05230] [ 7] 0   libmpi.20.dylib                     0x000000010af24539 MPI_Irecv + 559
+[Warrens-MacBook-Pro:05230] [ 8] 0   brooks_iyengar                      0x000000010aee9e8f main + 383
+[Warrens-MacBook-Pro:05230] [ 9] 0   libdyld.dylib                       0x00007fff8f3b15ad start + 1
+[Warrens-MacBook-Pro:05230] [10] 0   libmpi.20.dylib                     0x000000010ca98286 ompi_errhandler_invoke + 98
+[Warrens-MacBook-Pro:05231] [ 7] 0   libmpi.20.dylib                     0x000000010cabf539 MPI_Irecv + 559
+[Warrens-MacBook-Pro:05231] [ 8] 0   brooks_iyengar                      0x000000010ca81e8f main + 383
+[Warrens-MacBook-Pro:05231] [ 9] 0   libdyld.dylib                       0x00007fff8f3b15ad start + 1
+[Warrens-MacBook-Pro:05231] [10] 0   ???                                 0x0000000000000001 0x0 + 1
+[Warrens-MacBook-Pro:05231] *** End of error message ***
+[Warrens-MacBook-Pro:05229] *** End of error message ***
+0   ???                                 0x0000000000000001 0x0 + 1
+[Warrens-MacBook-Pro:05230] *** End of error message ***
+--------------------------------------------------------------------------
+mpirun noticed that process rank 0 with PID 0 on node Warrens-MacBook-Pro exited on signal 6 (Abort trap: 6).
+--------------------------------------------------------------------------
