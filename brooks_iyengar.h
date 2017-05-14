@@ -10,17 +10,13 @@ struct sensor_message {
   int num;
   float data;
   time_t time_of_measurement;
+  time_t time_received;
 };
 
+/* some program specific macros */
 #define MESSAGE_SIZE\
   sizeof( struct sensor_message )
 
-/* index of MPI data in info array*/
-#define i_RANK 0x0
-#define i_SIZE 0x1
-#define MPI_INFO 0x2
-
-/* some program specific macros */
 #define SENSING 0x1
 
 #define MPI_LOGIC( index, rank )\
@@ -38,6 +34,9 @@ struct sensor_message {
   MPI_Init(&argc, &argv);\
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);\
   MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+#define CHECK_RUNTIME()\
+  goto EXIT;
 
 /* clean up any MPI related info */
 #define MPI_FINISH()\

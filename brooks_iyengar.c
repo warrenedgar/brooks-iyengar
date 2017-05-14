@@ -4,53 +4,50 @@
 int main( int argc, char ** argv ){
 
 
-  int info [MPI_INFO]; 
-  MPI_SETUP(argc, argv, info[i_RANK], info[i_SIZE]);
-  DBG("Hello I am #%d out of %d.\n", info[i_RANK], info[i_SIZE]);
+  int _rank = -1;
+  int _size = -1;
+  MPI_SETUP(argc, argv, _rank, _size);
+  DBG("Hello, I am %d of %d\n",_rank,_size);
 
   while( SENSING ){
+    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Status status[ (_size - 1)*2 ];
+    MPI_Request request[ (_size - 1)*2 ];
 
-    MPI_Status status[ info[i_SIZE] - 1 ];
-    MPI_Request request[ info[i_SIZE] - 1 ];
-
-    for( int i = 0; i < info[i_SIZE]; ++i ){
-      if( i != info[i_RANK] ){
-        //struct sensor_message sender;
-        //sender.num = info[i_RANK];
-        //sender.data = 1.0 * info[i_RANK];
-        //time( &sender.time_of_measurement );
-        //MPI_Isend( (void*)&sender, MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD, &request[i]);
-        int recv_index = MPI_LOGIC(i, info[i_RANK]);
-        MPI_Isend( &info[i_RANK], 1, MPI_INT, i, 111, MPI_COMM_WORLD, &request[recv_index]);
-      }
+    for( int i = 0; i < _size; ++i ){
+      if( i == _rank ) continue;
+      struct sensor_message sender;
+      sender.num = _rank;
+      sender.data = 1.0 * i;
+      time( &sender.time_of_measurement );
+      int recv_index = MPI_LOGIC(i, _rank);
+      DBG("Sending %d to %d :: request_index is %d\n", _rank, sender.num, recv_index);
+      MPI_Isend( (void*)&sender, MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD, &request[recv_index]);
     }
 
-    //char buffer[i_SIZE][MESSAGE_SIZE];
-    int buffer[i_SIZE-1];
-
-    for( int i = 0; i < info[i_SIZE]; ++i ){
-      if( i != info[i_RANK] ){
-        //MPI_Irecv(buffer[i], MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD,
-        //    &request[i]);
-        int recv_index = MPI_LOGIC(i, info[i_RANK]);
-        MPI_Irecv(&buffer[recv_index], 1, MPI_INT, i, 111, MPI_COMM_WORLD,
-            &request[recv_index]);
-      }
+    struct sensor_message buffer[_size-1];
+    MPI_Barrier(MPI_COMM_WORLD);
+    for( int i = 0; i < _size; ++i ){
+      if( i == _rank )continue;
+      int recv_index = MPI_LOGIC(i, _rank);
+      DBG("Setting up reception rank is -> %d  recv index is -> %d\n", _rank, (recv_index + _size -1));
+      MPI_Irecv(&buffer[recv_index], MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD,
+          &request[recv_index + _size - 1]);
     }
 
-    MPI_Waitall(info[i_SIZE]-1, request, status);
+    MPI_Waitall((_size-1)*2, request, status);
+    MPI_Barrier(MPI_COMM_WORLD);
 
-    for( int i = 0; i < info[i_SIZE]; ++i){
-      if( i != info[i_RANK] ){
-        //struct sensor_message received = *(struct sensor_message *)&buffer[i];
-        //time( &received.time_of_measurement );
-        fprintf(stderr, "rank %d message from %d recived.\n", info[i_RANK], buffer[i] );
-        //PRINT_MESSAGE(received);
-      }
+    for( int i = 0; i < _size-1; ++i){
+      struct sensor_message received = *(struct sensor_message *)&buffer[i];
+      time( &received.time_received );
+      PRINT_MESSAGE(received);
     }
-    sleep(1);
+
+    sleep(2);
+    CHECK_RUNTIME();
+
   }
-
   MPI_FINISH();
   return 0;
 }
