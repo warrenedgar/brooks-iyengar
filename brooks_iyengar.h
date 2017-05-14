@@ -3,11 +3,13 @@
 
 #include <mpi.h>
 #include <time.h>
+#include <sys/time.h>
 #include <stdio.h>
 #include <unistd.h>
 
 struct sensor_message {
-  int num;
+  int from_process;
+  int to_process;
   float data;
   time_t time_of_measurement;
   time_t time_received;
@@ -19,15 +21,8 @@ struct sensor_message {
 
 #define SENSING 0x1
 
-#define MPI_LOGIC( index, rank )\
+#define RECV_INDEX( index, rank )\
   index < rank ? index : index - 1;
-
-#define PRINT_MESSAGE(message)\
-  char sbuf[30];\
-  struct tm lt = *localtime( &message.time_of_measurement );\
-  strftime(sbuf, 30,"%x at %I:%M%p", &lt );\
-  fprintf(stderr, "Message is from %d :: data is %f on %s\n",\
-      message.num, message.data, sbuf);
 
 /* set up any MPI related info */
 #define MPI_SETUP(argc, argv, rank, size)\
@@ -35,8 +30,16 @@ struct sensor_message {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);\
   MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-#define CHECK_RUNTIME()\
-  goto EXIT;
+/* see if enough time has elapsed to exit */
+#define CHECK_RUNTIME(start_time, current_time, run_time, _rank)\
+  int flag = 0;\
+  if( _rank == 0 ){\
+    gettimeofday(&current_time, NULL);\
+    unsigned long elapsed_time = current_time.tv_sec - start_time.tv_sec;\
+    if( (elapsed_time / 60) >= run_time ) flag = 1;\
+  }\
+  MPI_Bcast(&flag, 1, MPI_INT, 0, MPI_COMM_WORLD);\
+  if( flag )goto EXIT;\
 
 /* clean up any MPI related info */
 #define MPI_FINISH()\
@@ -47,6 +50,15 @@ struct sensor_message {
 #define DEBUG 1
 
 #define DBG(fmt, ...) \
-    if (DEBUG) fprintf(stderr, fmt, __VA_ARGS__);
+  if ( DEBUG ) fprintf(stderr, fmt, __VA_ARGS__);
+
+#define PRINT_MESSAGE(message)\
+  if( DEBUG ){\
+    char sbuf[30];\
+    struct tm lt = *localtime( &message.time_of_measurement );\
+    strftime(sbuf, 30,"%x at %I:%M%p", &lt );\
+    fprintf(stderr, "Rank %d:: message is from %d :: data is %f on %s\n",\
+      message.to_process, message.from_process, message.data, sbuf);\
+  }
 
 #endif /* BROOKSIYENGAR_H */

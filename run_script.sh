@@ -9,6 +9,7 @@ today=`date +%Y-%m-%d.%H:%M:%S`
 
 # init variables
 nprocess=1
+runtime=1
 
 # get the number of threads to run program with
 for i in "$@";do
@@ -17,8 +18,8 @@ for i in "$@";do
       nprocess="${i#*=}"
       shift
       ;;
-    -c=*)
-      func=0
+    -t=*)
+      runtime="${i#*=}"
       shift
       ;;
     *)
@@ -34,4 +35,4 @@ fi
 mkdir -p results$today/
 touch results$today/nprocess$nprocess:brooksIyengar$today.txt
 
-mpirun -np $nprocess ./brooks_iyengar >> results$today/nprocess$nprocess:brooksIyengar$today.txt
+mpirun -np $nprocess ./brooks_iyengar $runtime >> results$today/nprocess$nprocess:brooksIyengar$today.txt
