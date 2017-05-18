@@ -5,24 +5,34 @@
 #include <time.h>
 #include <sys/time.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
+/* numeric constants */
+#define SENSING 0x1
+#define INTERVAL_SIZE 0xA
+#define PRINT_BUFFER_SIZE 50
+
 struct sensor_message {
+  float data [INTERVAL_SIZE];
   int from_process;
   int to_process;
-  float data;
   time_t time_of_measurement;
   time_t time_received;
 };
+
+void measure(struct sensor_message * sm);
+void fuse(struct sensor_message * buffer);
+void parse_out_command_args( char ** argv );
+void init_struct( struct sensor_message * init, float * data, int to_process);
 
 /* some program specific macros */
 #define MESSAGE_SIZE\
   sizeof( struct sensor_message )
 
-#define SENSING 0x1
-
 #define RECV_INDEX( index, rank )\
-  index < rank ? index : index - 1;
+  index < rank ? index : index - 1
 
 /* set up any MPI related info */
 #define MPI_SETUP(argc, argv, rank, size)\
@@ -54,11 +64,14 @@ struct sensor_message {
 
 #define PRINT_MESSAGE(message)\
   if( DEBUG ){\
-    char sbuf[30];\
-    struct tm lt = *localtime( &message.time_of_measurement );\
-    strftime(sbuf, 30,"%x at %I:%M%p", &lt );\
-    fprintf(stderr, "Rank %d:: message is from %d :: data is %f on %s\n",\
-      message.to_process, message.from_process, message.data, sbuf);\
+    char sbuf[PRINT_BUFFER_SIZE];\
+    struct tm mt = *localtime( &message.time_of_measurement );\
+    strftime(sbuf, PRINT_BUFFER_SIZE, "%x at %I:%M%p", &mt );\
+    char sbuf2[PRINT_BUFFER_SIZE];\
+    struct tm rt = *localtime( &message.time_received );\
+    strftime(sbuf2, PRINT_BUFFER_SIZE, "%x at %I:%M%p", &rt );\
+    fprintf(stderr, "Rank %d:: message is from %d :: data is %f measured at %s received at %s\n",\
+      message.to_process, message.from_process, message.data[0], sbuf, sbuf2);\
   }
 
 #endif /* BROOKSIYENGAR_H */
