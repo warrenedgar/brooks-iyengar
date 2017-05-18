@@ -6,6 +6,7 @@ int _rank = -1;
 int _size = -1;
 unsigned long run_time = 1;
 int number_faulty_sensors = 1;
+int counter = 0;
 
 int main( int argc, char ** argv ){
 
@@ -17,6 +18,8 @@ int main( int argc, char ** argv ){
   /* pre-declare space for message(s) from every sensor */
   struct sensor_message buffer[_size];
   memset(buffer, 0, _size * MESSAGE_SIZE);
+  srand((unsigned int)(time(NULL)*(_rank + _size)));
+
 
   /* set up running parameters */
   parse_out_command_args( argv );
@@ -24,18 +27,15 @@ int main( int argc, char ** argv ){
   /* grab a pointer to the local interval, will be used to hold measurements */
   struct sensor_message * local = &buffer[_rank];
 
-  float float_boat[INTERVAL_SIZE] = {0};
-
   /* run the simulated sensor network */
   while( SENSING ){
 
     MPI_Barrier(MPI_COMM_WORLD);
-
     measure( local );
 
     for( int i = 0; i < _size; ++i ){
       if( i == _rank ) continue;
-      struct sensor_message sender; init_struct( &sender, float_boat, i);
+      struct sensor_message sender; init_struct( &sender, local->data, i);
       MPI_Isend( (void*)&sender, MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD, &request[RECV_INDEX(i, _rank)]);
     }
 
@@ -56,6 +56,7 @@ int main( int argc, char ** argv ){
     }
 
     fuse(buffer);
+ 
     sleep(2);
     CHECK_RUNTIME(start_time, current_time, run_time, _rank);
 
@@ -68,7 +69,10 @@ int main( int argc, char ** argv ){
 
 /* run the code to simulate an individual sensor */
 void measure(struct sensor_message * sm){
-
+    for( int n = 0; n < INTERVAL_SIZE; ++n)
+      sm->data[n] = 2.0 * sin( counter*M_PI/2 ) + GET_RAND(1);
+    //sleep(GET_RAND(10));
+    counter++;
 }
 
 /* run the code to fuse all of the sensors data */

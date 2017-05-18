@@ -2,6 +2,7 @@
 #define BROOKSIYENGAR_H
 
 #include <mpi.h>
+#include <math.h>
 #include <time.h>
 #include <sys/time.h>
 #include <stdio.h>
@@ -33,6 +34,9 @@ void init_struct( struct sensor_message * init, float * data, int to_process);
 
 #define RECV_INDEX( index, rank )\
   index < rank ? index : index - 1
+
+#define GET_RAND( max )\
+  ((float)rand()/(float)(RAND_MAX))*max
 
 /* set up any MPI related info */
 #define MPI_SETUP(argc, argv, rank, size)\
@@ -70,7 +74,7 @@ void init_struct( struct sensor_message * init, float * data, int to_process);
     char sbuf2[PRINT_BUFFER_SIZE];\
     struct tm rt = *localtime( &message.time_received );\
     strftime(sbuf2, PRINT_BUFFER_SIZE, "%x at %I:%M%p", &rt );\
-    fprintf(stderr, "Rank %d:: message is from %d :: data is %f measured at %s received at %s\n",\
+    fprintf(stderr, "Process %d:: message is from %d :: data is [%f] measured at [%s] received at [%s]\n",\
       message.to_process, message.from_process, message.data[0], sbuf, sbuf2);\
   }
 
