@@ -5,6 +5,7 @@ struct timeval start_time, current_time;
 int _rank = -1;
 int _size = -1;
 unsigned long run_time = 1;
+int number_faulty_sensors = 1;
 
 int main( int argc, char ** argv ){
 
@@ -13,7 +14,9 @@ int main( int argc, char ** argv ){
   MPI_Request request[ (_size - 1)*2 ];
   struct sensor_message buffer[_size-1];
   gettimeofday(&start_time, NULL);
+  
   run_time = atoi(argv[1]);
+  number_faulty_sensors = atoi(argv[2]);
 
   while( SENSING ){
     MPI_Barrier(MPI_COMM_WORLD);
