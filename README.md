@@ -5,6 +5,22 @@ A classical problem in distributed computing is Byzantine Generals' Problem, int
 
 Enter the Brooks-Iyengar algorithm as an attempt to solve this problem. This algorithm uses sensor fusion to mathematically eliminate the faulty sensors. In short, this is achieved by taking measurements over an interval, the measured interval is then shared between all sensors on the network. The fusion step then happens, by creating a weighted average of the midpoints of all the intervals. At this point you can eliminate any sensors with high variance or use heuristics to choose the reliable nodes. It runs in O(NlogN) time and can handle up to N/3 faulty sensors.
 
+## Algorithm in pseudocode
+
+while sensing
+
+  get measurement over time interval
+  
+  send all measurements to every other sensor
+  
+  isolate endpoints
+  
+  make a weighted region diagram
+  
+  discard lowly weighted sections
+  
+  report new midpoint
+
 # OpenMPI Methods Used
 
 ## Isend and Ireceive
@@ -22,13 +38,13 @@ Seeing as this is a timed excution program, it is necessary for each sensor to k
 As with other submissions simply run the run_script
 
 ```sh
-bash run_script
+bash run_script.sh
 ```
 
 With parameters
 
 ```sh
-bash run_script -t=2 -p=8 -e=2
+bash run_script.sh -t=2 -p=8 -e=2
 ```
 Where -t=# is the time in minutes, -p=# is number of sensors in the network, -e=# is the number of faulty sensors.
 
