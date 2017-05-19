@@ -32,11 +32,21 @@ int main( int argc, char ** argv ){
   while( SENSING ){
 
     MPI_Barrier(MPI_COMM_WORLD);
+
+    /* get local sensor data */
     measure( local );
 
+    /* send and recieve messages to other sensors */
     for( int i = 0; i < _size; ++i ){
       if( i == _rank ){init_struct( &buffer[i], local->data, i);continue;}
       struct sensor_message sender; init_struct( &sender, local->data, i);
+      
+      /* traitorus general step */
+      if( _rank < number_faulty_sensors ){
+        for(int n = 0; n < INTERVAL_SIZE; ++n)
+          sender.data[n] += GET_RAND(.3);
+      }
+
       MPI_Isend( (void*)&sender, MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD, &request[RECV_INDEX(i, _rank)]);
     }
 
@@ -46,21 +56,16 @@ int main( int argc, char ** argv ){
       MPI_Irecv(&buffer[i], MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD,
           &request[recv_index + _size - 1]);
     }
-
     MPI_Waitall((_size-1)*2, request, status);
 
-    for( int i = 0; i < _size; ++i){
-      struct sensor_message received = *(struct sensor_message *)&buffer[i];
-      time( &received.time_received );
-      PRINT_MESSAGE(received);
-    }
+    for( int i = 0; i < _size; ++i)
+      time(&buffer[i].time_received);
 
+    /* process data */
     fuse(buffer);
-    WRITE_TO_FILE( buffer[_rank].data[0], fp );
 
     sleep(2);
     CHECK_RUNTIME(start_time, current_time, run_time, _rank);
-
   }
 
   /* done */
@@ -79,58 +84,63 @@ void measure(struct sensor_message * sm){
 /* run the code to "fuse" all of the sensors data */
 void fuse(struct sensor_message * buffer){
 
-    float endpoints [ _size * 2];
-    int weights [ _size * 2];
-    memset(endpoints, 0.0, sizeof(endpoints));
-    memset(weights, 0, sizeof(endpoints));
+  float endpoints [ _size * 2];
+  int weights [ _size * 2];
+  memset(endpoints, 0.0, sizeof(endpoints));
+  memset(weights, 0, sizeof(endpoints));
 
-    struct sensor_message * walk = buffer;
-    for(int n = 0; n < _size * 2; n += 2){
-      endpoints[n] = walk->data[0];
-      endpoints[n+1] = walk->data[INTERVAL_SIZE-1];
-      walk++;
+  /* collect all the endpoints */
+  struct sensor_message * walk = buffer;
+  for(int n = 0; n < _size * 2; n += 2){
+    endpoints[n] = walk->data[0];
+    endpoints[n+1] = walk->data[INTERVAL_SIZE-1];
+    walk++;
+  }
+  bubble_sort( endpoints );
+
+  /* weight them according to number overlapping */
+  walk = buffer;
+  for(int n = 0; n < _size; ++n){
+    float min = walk->data[0];
+    float max = walk->data[INTERVAL_SIZE-1];
+    int idx = 0;
+    while( endpoints[idx] < min ) idx++;
+    while( endpoints[idx] <= max ){
+      weights[idx]++;
+      idx++;
     }
+    walk++;
+  }
 
-    bubble_sort( endpoints );
-    
-    walk = buffer;
-    for(int n = 0; n < _size; ++n){
-      float min = walk->data[0];
-      float max = walk->data[INTERVAL_SIZE-1];
-      int idx = 0;
-      while( endpoints[idx] < min ) idx++;
-      while( endpoints[idx] <= max ){
-        weights[idx]++;
-        idx++;
-      }
-      walk++;
-    }
+  /* Extract the heavily weighted intervals                            *
+   * min-weight relaxed by 1, large % of error in noise from rand(.1); */
+  int min_weight = _size - 1 - number_faulty_sensors;
+  float estimate = 0.0;
+  int sigma_weight = 0;
+  int idx = 0;
+  while( idx < _size * 2){
+    while( idx < _size * 2 && weights[idx] < min_weight) idx++; 
+    if( idx == _size * 2)break;
+    float leftInclusive = endpoints[idx];
+    int curW = weights[idx];
+    while( idx < _size * 2 && weights[idx] == curW ) idx++;
+    float rightInclusive = endpoints[idx++];
+    sigma_weight += curW;
+    estimate += curW * ((leftInclusive + rightInclusive)/2);
+  }
+  estimate /= sigma_weight;
 
-    DBG("Fused data -> [ %f, %f, %f, %f, %f, %f, %f, %f, %f, %f]\nWeights -> [ %d, %d, %d, %d, %d, %d, %d, %d, %d, %d]\n",
-        endpoints[0], endpoints[1], endpoints[2], endpoints[3], endpoints[4],
-        endpoints[5], endpoints[6], endpoints[7], endpoints[8], endpoints[9],
-        weights[0], weights[1], weights[2], weights[3], weights[4],
-        weights[5], weights[6], weights[7], weights[8], weights[9])
-
-   /* min-weight relaxed by 1, large % of error in noise from rand(.1); */
-   int min_weight = _size - 1 - number_faulty_sensors;
-   float estimate = 0.0;
-   int sigma_weight = 0;
-   int idx = 0;
-
-   while( idx < _size * 2){
-     while( weights[idx] < min_weight) idx++;
-     float leftInclusive = endpoints[idx];
-     int curW = weights[idx];
-     while( weights[idx] == curW ) idx++;
-     float rightInclusive = endpoints[idx++];
-     sigma_weight += curW;
-     estimate += curW * ((leftInclusive + rightInclusive)/2);
-   }
-
-   estimate /= sigma_weight;
-
-   DBG("Estimate is %f\n", estimate);
+  /* calculate a plain old average for comparision */
+  float average = 0.0;
+  walk = buffer;
+  for(int n = 0; n < _size; ++n){
+    for(int i = 0; i < INTERVAL_SIZE; ++i)
+      average += walk->data[i];
+    walk++;
+  }
+  average /= (_size * INTERVAL_SIZE);
+  DBG("Fused estimate is %f dumb average is %f\n", estimate, average);
+  WRITE_TO_FILE( estimate, average, fp );
 }
 
 /* the much maligned bubble sort */

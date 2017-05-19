@@ -8,7 +8,7 @@ make
 today=`date +%Y-%m-%d.%H:%M:%S` 
 
 # init variables
-nprocess=1
+nprocess=5
 runtime=1
 faulty=1
 

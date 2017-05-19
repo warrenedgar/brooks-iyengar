@@ -57,8 +57,8 @@ void init_struct( struct sensor_message * init, float * data, int to_process);
   fp = fopen(sbuf, "w");
 
 /* write to file as newline delimited data*/
-#define WRITE_TO_FILE( data, fp )\
-  fprintf( fp, "%04.04f\n", data)
+#define WRITE_TO_FILE( fused, average, fp )\
+  fprintf( fp, "%04.04f,%04.04f\n", fused, average)
 
 /* see if enough time has elapsed to exit */
 #define CHECK_RUNTIME(start_time, current_time, run_time, _rank)\
