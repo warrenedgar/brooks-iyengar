@@ -40,4 +40,9 @@ fi
 mkdir -p results$today/
 touch results$today/nprocess$nprocess:brooksIyengar$today.txt
 
+# run simulation
 mpirun -np $nprocess ./brooks_iyengar $runtime $faulty >> results$today/nprocess$nprocess:brooksIyengar$today.txt
+
+# move results && clean up
+cp ./processOut* ./results$today/ 
+rm processOut*
