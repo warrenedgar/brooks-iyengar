@@ -35,7 +35,7 @@ int main( int argc, char ** argv ){
     measure( local );
 
     for( int i = 0; i < _size; ++i ){
-      if( i == _rank ) continue;
+      if( i == _rank ){init_struct( &buffer[i], local->data, i);continue;}
       struct sensor_message sender; init_struct( &sender, local->data, i);
       MPI_Isend( (void*)&sender, MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD, &request[RECV_INDEX(i, _rank)]);
     }
@@ -76,9 +76,61 @@ void measure(struct sensor_message * sm){
   counter += .2;
 }
 
-/* run the code to fuse all of the sensors data */
+/* run the code to "fuse" all of the sensors data */
 void fuse(struct sensor_message * buffer){
 
+    float endpoints [ _size * 2];
+    int weights [ _size * 2];
+    memset(endpoints, 0.0, sizeof(endpoints));
+    memset(weights, 0, sizeof(endpoints));
+
+    struct sensor_message * walk = buffer;
+    for(int n = 0; n < _size * 2; n += 2){
+      endpoints[n] = walk->data[0];
+      endpoints[n+1] = walk->data[INTERVAL_SIZE-1];
+      walk++;
+    }
+
+    bubble_sort( endpoints );
+    
+    walk = buffer;
+    for(int n = 0; n < _size; ++n){
+      float min = walk->data[0];
+      float max = walk->data[INTERVAL_SIZE-1];
+      int idx = 0;
+      while( endpoints[idx] < min ) idx++;
+      while( endpoints[idx] <= max ){
+        weights[idx]++;
+        idx++;
+      }
+      walk++;
+    }
+
+    DBG("Fused data -> [ %f, %f, %f, %f, %f, %f, %f, %f, %f, %f]\nWeights -> [ %d, %d, %d, %d, %d, %d, %d, %d, %d, %d]\n",
+        endpoints[0], endpoints[1], endpoints[2], endpoints[3], endpoints[4],
+        endpoints[5], endpoints[6], endpoints[7], endpoints[8], endpoints[9],
+        weights[0], weights[1], weights[2], weights[3], weights[4],
+        weights[5], weights[6], weights[7], weights[8], weights[9])
+
+   /* min-weight relaxed by 1, large % of error in noise from rand(.1); */
+   int min_weight = _size - 1 - number_faulty_sensors;
+   float estimate = 0.0;
+   int sigma_weight = 0;
+   int idx = 0;
+
+   while( idx < _size * 2){
+     while( weights[idx] < min_weight) idx++;
+     float leftInclusive = endpoints[idx];
+     int curW = weights[idx];
+     while( weights[idx] == curW ) idx++;
+     float rightInclusive = endpoints[idx++];
+     sigma_weight += curW;
+     estimate += curW * ((leftInclusive + rightInclusive)/2);
+   }
+
+   estimate /= sigma_weight;
+
+   DBG("Estimate is %f\n", estimate);
 }
 
 /* the much maligned bubble sort */
