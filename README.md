@@ -17,6 +17,8 @@ This acts as a sync step for all sensors. Barrier merely acts as a join for proc
 Seeing as this is a timed excution program, it is necessary for each sensor to kill itself after a fixed period of time. However, it is possible for one process to keep running if it gets to the check before all the others. To get around this one thread was designated with the resposibility to check the runtime, and then broadcasted the result to all others.
 
 # Results
-![graph of results][results.png]
+![graph of results](https://github.com/unh-hpc/project-2-brooks-iyengar/blob/master/results.png)
+
+The green dashed line is result from running the Brooks-Iyengar algorithm, red dashed line is the Brooks-Iyengar algorithm without the last step of discarding the lower weight intervals. In other words, an average of all measurements. The small blue dots are the analytical result.
 
 # Discussion
