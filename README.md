@@ -16,6 +16,28 @@ This acts as a sync step for all sensors. Barrier merely acts as a join for proc
 ## Broadcast
 Seeing as this is a timed excution program, it is necessary for each sensor to kill itself after a fixed period of time. However, it is possible for one process to keep running if it gets to the check before all the others. To get around this one thread was designated with the resposibility to check the runtime, and then broadcasted the result to all others.
 
+# Technical Details
+
+## Running
+As with other submissions simply run the run_script
+
+```sh
+bash run_script
+```
+
+With parameters
+
+```sh
+bash run_script -t=2 -p=8 -e=2
+```
+Where -t=# is the time in minutes, -p=# is number of sensors in the network, -e=# is the number of faulty sensors.
+
+## What are we simulating
+
+The function f(x) = 2 * sin((pi * x )/2) will be calculated. In addition to this every measurement will have noise added to it within the range of (-.05 , .05). For every new step .2 is added to x, the simulation starts at 0 and goes till a timeout occurs.
+
+If a sensor is a faulty unit, the data it sends to each other sensor will be different. This will be each measurement with random noise added (-.5, .5). 
+
 # Results
 ![graph of results](https://github.com/unh-hpc/project-2-brooks-iyengar/blob/master/results.png)
 
