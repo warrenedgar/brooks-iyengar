@@ -71,6 +71,5 @@ Above is a presentation of the average value over all sensors (including the fau
 The results seem to say that a dumb average is almost better, but there are some important considerations to have. First, all of the 'noise' I generate is from a standard uniform distrubtion. This makes taking the average of the all values actually work very well. If the noise was more skewed and extreme in one direction, the red line would be pulled in that direction with the green being more resistant. It is similar to mean vs median. While the green line is outlier resistant, the outliers just are not that extreme.
 
 ## Thoughts
-This was interesting for me to implement because I actually had to figure most of this out on my own. I couldn't find any reference implementations in other languages/frameworks. In the paper, they claim this is an easy algorithm to implement, but this depends on if the infastructure and communication is already set up. If it already is, its just a little bit of post-processing. For the opposite, getting every endpoint to communicate cleanly is the true challenge.
-
+This was interesting for me to implement, I actually had to figure most of this out on my own. I couldn't find any reference implementations in other languages/frameworks. In the paper, they claim this is an easy algorithm to implement, but this depends on if the infastructure and communication is already set up. If it already is, its just a little bit of post-processing. For the opposite, getting every endpoint to communicate cleanly is the true challenge.
 
