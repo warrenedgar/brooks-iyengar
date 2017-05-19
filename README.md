@@ -17,6 +17,6 @@ This acts as a sync step for all sensors. Barrier merely acts as a join for proc
 Seeing as this is a timed excution program, it is necessary for each sensor to kill itself after a fixed period of time. However, it is possible for one process to keep running if it gets to the check before all the others. To get around this one thread was designated with the resposibility to check the runtime, and then broadcasted the result to all others.
 
 # Results
-![graph of results][results]
+![graph of results][results.png]
 
 # Discussion
