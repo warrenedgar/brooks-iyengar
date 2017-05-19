@@ -58,6 +58,8 @@ The function f(x) = 2 * sin((pi * x )/2) will be calculated. In addition to this
 
 If a sensor is a faulty unit, the data it sends to each other sensor will be different. This will be each measurement with random noise added (-.5, .5). 
 
+The simulation has 5 sensors with 1 of them being faulty.
+
 # Results
 ![graph of results](https://github.com/unh-hpc/project-2-brooks-iyengar/blob/master/results.png)
 
