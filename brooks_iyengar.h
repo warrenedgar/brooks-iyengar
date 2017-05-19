@@ -78,7 +78,7 @@ void init_struct( struct sensor_message * init, float * data, int to_process);
   MPI_Finalize();
 
 /* DEBUG DEBUG DEBUG */
-#define DEBUG 1
+#define DEBUG 0
 
 #define DBG(fmt, ...) \
   if ( DEBUG ) fprintf(stderr, fmt, __VA_ARGS__);

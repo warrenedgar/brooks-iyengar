@@ -44,7 +44,7 @@ int main( int argc, char ** argv ){
       /* traitorus general step */
       if( _rank < number_faulty_sensors ){
         for(int n = 0; n < INTERVAL_SIZE; ++n)
-          sender.data[n] += GET_RAND(.3);
+          sender.data[n] += GET_RAND(1);
       }
 
       MPI_Isend( (void*)&sender, MESSAGE_SIZE, MPI_BYTE, i, 111, MPI_COMM_WORLD, &request[RECV_INDEX(i, _rank)]);
