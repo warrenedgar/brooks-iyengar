@@ -1,11 +1,27 @@
-/* see brooks_iyengar.h for includes */
+/**
+ * Brooks Iyengar Algorithm
+ *
+ * A distributed sensing algorithm designed for fault tolerance.
+ *
+ * https://en.wikipedia.org/wiki/Brooks–Iyengar_algorithm
+ *
+ * see brooks_iyengar.h for includes */
 #include "brooks_iyengar.h"
 
+/* used to track start and end time */
 struct timeval start_time, current_time;
+
+/* classic OpenMPI values */
 int _rank = -1;
 int _size = -1;
+
+/* number of minutes to run for */
 unsigned long run_time = 1;
+
+/* number of faulty sensors in the network */
 int number_faulty_sensors = 1;
+
+/* needed for sensor simulation & reporting */
 float counter = 0;
 FILE * fp;
 
@@ -139,7 +155,7 @@ void fuse(struct sensor_message * buffer){
     walk++;
   }
   average /= (_size * INTERVAL_SIZE);
-  DBG("Fused estimate is %f dumb average is %f\n", estimate, average);
+
   WRITE_TO_FILE( estimate, average, fp );
 }
 

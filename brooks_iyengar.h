@@ -40,7 +40,7 @@ void init_struct( struct sensor_message * init, float * data, int to_process);
 #define RECV_INDEX( index, rank )\
   index < rank ? index : index - 1
 
-/* Get a random float in range 0 - max */
+/* Get a random float in range -max - max */
 #define GET_RAND( max )\
   ((((float)rand()/(float)(RAND_MAX)) * 2 * max) - (max))
 
